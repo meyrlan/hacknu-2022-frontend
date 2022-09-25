@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>body {
+        font-family: Arial;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 0;
+      }
+      
+      #sidebar-parent {
+        position: absolute;
+        width: 400px;
+        height: 100vh;
+        z-index: 1;
+        left: 0;
+        top: 0;
+
+        display: flex;
+        align-items: center;
+      }
+      
+      #sidebar {
+        width: 100%;
+        height: 100%; 
+        background: radial-gradient(circle at 18.7% 37.8%, rgb(250, 250, 250) 0%, rgb(225, 234, 238) 90%);
+        box-shadow: -5px 7px 15px 7px rgba(0,0,0,0.41);
+        -webkit-box-shadow: -5px 7px 15px 7px rgba(0,0,0,0.41);
+        -moz-box-shadow: -5px 7px 15px 7px rgba(0,0,0,0.41);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        overflow-y: scroll;
+        overflow-x: hidden;
+      }
+
+      #sidebar h1 {
+        margin-top: 50px;
+      }
+
+      .fa-circle-arrow-left {
+        cursor: pointer;
+        z-index: 2;
+        margin-left: 10px;
+      }
+
+      #error-message {
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+      }
+
+      #user-div {
+        box-shadow:inset 0px 1px 0px 0px #ffffff;
+        background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+        background-color:#ededed;
+        border-radius:6px;
+        border:1px solid #dcdcdc;
+        display:inline-block;
+        cursor:pointer;
+        color:#777777;
+        font-family:Arial;
+        font-size:15px;
+        font-weight:bold;
+        padding:6px 24px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #ffffff;
+        width: 90%;
+        background: linear-gradient(to top, #c4c5c7 0%, #dcdddf 52%, #ebebeb 100%);
+        margin: 10px 0px;
+        padding: 10px;  
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #user-div:hover {
+        background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+        background-color:#dfdfdf;
+      }
+      #user-div:active {
+        position:relative;
+        top:1px;
+      }
+
+      .sidebar-head {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #identifier-div {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 10px;
+        box-shadow:inset 0px 1px 0px 0px #ffffff;
+        background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+        background-color:#ededed;
+        border-bottom-left-radius: 20px;
+        border:1px solid #dcdcdc;
+        display:inline-block;
+        color:#777777;
+        font-family:Arial;
+        font-size:15px;
+        font-weight:bold;
+        box-shadow: -8px 2px 21px -6px rgba(0,0,0,0.55);
+        -webkit-box-shadow: -8px 2px 21px -6px rgba(0,0,0,0.55);
+        -moz-box-shadow: -8px 2px 21px -6px rgba(0,0,0,0.55);
+      }
+
+      #switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      /* Hide default HTML checkbox */
+      #switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      /* The slider */
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      input:checked + .slider {
+        background-color: #2196F3;
+      }
+
+      input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+      }
+
+      input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+
+      /* Rounded sliders */
+      .slider.round {
+        border-radius: 34px;
+      }
+
+      .slider.round:before {
+        border-radius: 50%;
+      }
+
+      #interpolation {
+        width: 400px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: radial-gradient(circle at 18.7% 37.8%, rgb(250, 250, 250) 0%, rgb(225, 234, 238) 90%);
+        position: absolute;
+        z-index: 3;
+        bottom: 0;
+        left: calc(50vw - 200px);
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        font-family: 'Courier New', Courier, monospace;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+</style>
+  </head>
+  <body>
+    <div id="sidebar-parent">
+      <div id="sidebar">
+        <div class="sidebar-head">
+          <h1> 3D Tracking App </h1>
+          <hr style="height: 1px; width: 200px; background-color:gray; margin-bottom: 30px;">
+        </div>
+      </div> 
+      <i id="controller" class="fa-solid fa-circle-arrow-left fa-2xl"></i>
+    </div>
+
+    <div id="interpolation">
+    </div>
+
+    <div id="map"></div>
+    <script type="module" src="car.js"></script>
+    <script src="https://kit.fontawesome.com/ddc76bbc40.js" crossorigin="anonymous"></script>
+
+    <script> 
+      var isControllerToRight = true;
+      document.getElementById("controller").onclick = function() {
+        if (isControllerToRight === true) {
+          document.getElementById("controller").style.transform = 'rotate(180deg)';
+          document.getElementById("sidebar-parent").style.left = "-360px";
+          isControllerToRight = false;
+        } else {
+          document.getElementById("controller").style.transform = 'rotate(0deg)';
+          document.getElementById("sidebar-parent").style.left = "0px";
+          isControllerToRight = true;
+        }
+      };
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  </body>
+</html>
